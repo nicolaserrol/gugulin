@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "etala",
-    "slug": "etala",
+    "name": "Talaan",
+    "slug": "talaan",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.elite.talaan"
     },
     "web": {
       "bundler": "metro",
@@ -27,7 +28,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-font",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
@@ -37,8 +39,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "5902012d-c5e5-4369-a9e1-07e33ef57935"
+        "projectId": "ec4c3fec-6277-42c4-91b7-8b9b15b30181"
       }
-    }
+    },
+    "runtimeVersion": "1.0.0"
   }
 }
