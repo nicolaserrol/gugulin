@@ -3,21 +3,22 @@ import {
   FlatList,
   SafeAreaView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import _ from 'lodash';
+
+import { useDispatch } from 'react-redux';
+import { resetCategories } from '@/features/preference';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Icon from '@/components/Icon';
 
-import s from '@/constants/Style';
-import { useNavigation, useRouter } from 'expo-router';
+import { useAppSelector } from '@/hooks';
 
-import { NavigationProp } from '@react-navigation/native';
-import { DEFAULT_CATEGORIES } from '@/constants/Default';
+import s from '@/constants/Style';
+import { CategoryType } from '@/types';
 
 type CategoryRowProps = {
   icon: string;
@@ -36,13 +37,20 @@ const PreferenceRow = ({ icon, name }: CategoryRowProps) => {
 };
 
 export default function CategoriesScreen() {
-  const categories = useSelector(state => state.preference.categories);
+  const dispatch = useDispatch();
 
-  const renderItem = ({ item }) => <PreferenceRow {...item} />;
+  const categories = useAppSelector(state => state.preference.categories);
+
+  const renderItem = ({ item }: { item: CategoryType }) => <PreferenceRow {...item} />;
+
+  useEffect(() => {
+    dispatch(resetCategories());
+  }, []);
 
   return (
     <SafeAreaView>
       <FlatList
+        contentContainerStyle={s.lgGutterBottom}
         data={categories}
         renderItem={renderItem}
       />

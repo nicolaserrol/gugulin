@@ -1,36 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { CURRENCIES, DEFAULT_CATEGORIES } from '@/constants/Default';
-
-export type Category = {
-  code: string;
-  icon: string;
-  name: string;
-  remarks?: string;
-}
-
-export type Currency = {
-  code: string,
-  name: string,
-  prepend?: boolean;
-  symbol: string,
-}
+import { CURRENCIES, DEFAULT_CATEGORIES, DEFAULT_CURRENCY } from '@/constants/Default';
+import {
+  CategoryType,
+  CurrencyType,
+} from "@/types";
 
 type PreferenceState = {
-  budgetType: string;
-  categories: Array<Category>;
-  currencies: Array<Currency>;
-  currency: object;
+  budgetType: 'monthly' | 'biMonthly';
+  categories: Array<CategoryType>;
+  currencies: Array<CurrencyType>;
+  currency: CurrencyType;
 }
 
 const initialState: PreferenceState = {
   categories: DEFAULT_CATEGORIES,
-  budgetType: 'monthly' || 'bi-monthly',
+  budgetType: 'monthly' || 'biMonthly',
   currencies: CURRENCIES,
-  currency: {
-    code: 'php',
-    name: 'Philippine Peso',
-    symbol: '₱',
-  },
+  currency: DEFAULT_CURRENCY,
 };
 
 export const preferenceSlice = createSlice({
@@ -40,9 +26,7 @@ export const preferenceSlice = createSlice({
     resetCategories: (state) => {
       state.categories = DEFAULT_CATEGORIES;
     },
-    resetPreference: (state) => {
-      state = initialState;
-    },
+    resetPreference: () => initialState,
     setBudgetType: (state, action) => {
       state.budgetType = action.payload;
     },

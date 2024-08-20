@@ -5,17 +5,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import _ from 'lodash';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Icon from '@/components/Icon';
 
+import { useAppSelector } from '@/hooks';
+
 import s from '@/constants/Style';
 import { useNavigation } from 'expo-router';
 
-import { resetCategories, resetPreference } from '@/features/preference';
+import { resetPreference } from '@/features/preference';
 
 type PreferenceRowProps = {
   caption: string;
@@ -51,19 +53,19 @@ export default function PreferenceScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const budgetType = useSelector(state => state.preference.budgetType);
-  const currency = useSelector(state => state.preference.currency);
+  const budgetType = useAppSelector(state => state.preference.budgetType);
+  const currency = useAppSelector(state => state.preference.currency);
 
   const handleCategoryPress = () => navigation.navigate('Categories');
   const handleLogout = () => {
     console.log('Cache has ben reset to default')
-    dispatch(resetCategories());
+    dispatch(resetPreference());
   }
 
   return (
     <SafeAreaView>
       <PreferenceRow
-        caption={'Tag your budget needs'}
+        caption={'List of tags for budget'}
         title={'Categories'}
         onPress={handleCategoryPress}
       />

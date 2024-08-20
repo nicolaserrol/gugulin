@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Talaan",
-    "slug": "talaan",
+    "name": "Gugulin",
+    "slug": "gugulin",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.elite.talaan"
+      "package": "com.app.gugulin"
     },
     "web": {
       "bundler": "metro",
@@ -39,8 +39,11 @@
         "origin": false
       },
       "eas": {
-        "projectId": "ec4c3fec-6277-42c4-91b7-8b9b15b30181"
+        "projectId": "ce38aa80-51db-4016-aebc-9a7b078fca59"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ce38aa80-51db-4016-aebc-9a7b078fca59"
     },
     "runtimeVersion": "1.0.0"
   }

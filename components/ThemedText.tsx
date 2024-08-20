@@ -2,6 +2,8 @@ import { Text, type TextProps, StyleSheet } from 'react-native';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 
+import s from '@/constants/Style';
+
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
@@ -21,7 +23,7 @@ export function ThemedText({
     <Text
       style={[
         { color },
-        type === 'caption' ? { ...styles.caption, color: `${color}AA`} : undefined,
+        type === 'caption' ? { ...s.caption1 } : undefined,
         type === 'default' ? styles.default : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,

@@ -1,18 +1,25 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { SheetProvider } from "react-native-actions-sheet";
 
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/lib/integration/react';
+import "./sheets";
+import "react-native-reanimated";
 
-import Fonts from '@/constants/Fonts';
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/lib/integration/react";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { injectStore } from '@/store/injector';
-import { persistor, store } from '@/store';
+import Fonts from "@/constants/Fonts";
+
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { injectStore } from "@/store/injector";
+import { persistor, store } from "@/store";
 
 injectStore(store);
 
@@ -34,15 +41,21 @@ export default function RootLayout() {
   }
 
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </ThemeProvider>
-      </PersistGate>
-    </Provider>
+    <SheetProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="Categories" />
+              <Stack.Screen name="AddCategory" />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </ThemeProvider>
+        </PersistGate>
+      </Provider>
+    </SheetProvider>
   );
 }

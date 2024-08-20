@@ -1,5 +1,5 @@
 {
-  "name": "talaan",
+  "name": "Gugulin",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -19,6 +19,7 @@
     "@react-native-community/datetimepicker": "8.0.1",
     "@react-native-community/netinfo": "11.3.1",
     "@react-native-community/slider": "4.5.2",
+    "@react-native-picker/picker": "^2.7.7",
     "@redux-devtools/serialize": "^0.4.1",
     "@reduxjs/toolkit": "^1.8.6",
     "@types/react": "~18.2.14",
@@ -27,7 +28,7 @@
     "currency.js": "^2.0.4-56b772e7",
     "d3-shape": "^3.2.0",
     "deprecated-react-native-prop-types": "^2.3.0",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.5",
     "expo": "~51.0.28",
     "expo-application": "~5.9.1",
     "expo-asset": "~10.0.10",
@@ -74,7 +75,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.5",
-    "react-native-actions-sheet": "^0.5.8",
+    "react-native-actions-sheet": "^0.9.7",
     "react-native-collapsible": "^1.6.1",
     "react-native-flash-message": "^0.3.1",
     "react-native-gesture-handler": "~2.16.1",
