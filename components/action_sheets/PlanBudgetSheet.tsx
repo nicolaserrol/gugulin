@@ -45,7 +45,7 @@ function PlanBudgetSheet(props: SheetProps<"plan-budget-sheet">) {
 
   return (
     <ActionSheet>
-      <ThemedView style={s.mdGutter}>
+      <ThemedView style={[s.mdGutter, s.sheetContainer]}>
         <ThemedText type="subtitle">{title}</ThemedText>
         <FlatList
           data={data}

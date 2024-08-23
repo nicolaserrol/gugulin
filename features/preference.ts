@@ -23,8 +23,9 @@ export const preferenceSlice = createSlice({
   initialState,
   name: 'preference',
   reducers: {
-    resetCategories: (state) => {
+    resetOptions: (state) => {
       state.categories = DEFAULT_CATEGORIES;
+      state.currencies = CURRENCIES;
     },
     resetPreference: () => initialState,
     setBudgetType: (state, action) => {
@@ -40,7 +41,7 @@ export const preferenceSlice = createSlice({
 });
 
 export const {
-  resetCategories,
+  resetOptions,
   resetPreference,
   setBudgetType,
   setCategories,

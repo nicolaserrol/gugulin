@@ -909,7 +909,9 @@ export const styles = StyleSheet.create({
     width: 50,
   },
 
-  tabBar: { width: 'auto' },
+  tabBar: {
+    borderRadius: 5,
+  },
   tabBarBadge: {
     backgroundColor: Colors.primary,
     borderColor: 'white',
@@ -1025,6 +1027,10 @@ export const styles = StyleSheet.create({
   xlgMarginBottom: {
     marginBottom: 80,
   },
+  sheetContainer: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  }
 });
 
 export default styles;

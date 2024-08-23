@@ -1,10 +1,6 @@
 import { SheetDefinition, registerSheet } from 'react-native-actions-sheet';
 import { PlanBudgetSheet } from '@/components/action_sheets';
-import {
-  CategoryType,
-  GroupType,
-  AmountTypeType,
-} from "@/types";
+import { SheetReturnType } from "@/types";
 
  
 registerSheet('plan-budget-sheet', PlanBudgetSheet);
@@ -22,7 +18,7 @@ declare module 'react-native-actions-sheet' {
         },
         title: string,
       },
-      returnValue: CategoryType | GroupType | AmountTypeType,
+      returnValue: SheetReturnType,
     }>;
   }
 }

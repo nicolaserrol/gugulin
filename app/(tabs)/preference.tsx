@@ -1,29 +1,29 @@
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useDispatch } from "react-redux";
+import _ from "lodash";
+
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import Icon from "@/components/Icon";
+
+import { useAppSelector } from "@/hooks";
+
+import s from "@/constants/Style";
+import { useFocusEffect, useNavigation } from "expo-router";
 
 import {
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useDispatch } from 'react-redux';
-import _ from 'lodash';
-
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import Icon from '@/components/Icon';
-
-import { useAppSelector } from '@/hooks';
-
-import s from '@/constants/Style';
-import { useNavigation } from 'expo-router';
-
-import { resetPreference } from '@/features/preference';
+  resetOptions,
+  resetPreference,
+  setCurrency,
+} from "@/features/preference";
+import { SheetManager } from "react-native-actions-sheet";
+import { useCallback, useEffect, useState } from "react";
 
 type PreferenceRowProps = {
   caption: string;
   title: string;
   onPress?: () => void;
-}
+};
 
 const PreferenceRow = ({ caption, title, onPress }: PreferenceRowProps) => {
   return (
@@ -32,63 +32,69 @@ const PreferenceRow = ({ caption, title, onPress }: PreferenceRowProps) => {
         <View style={s.horizontalStretchCenter}>
           <View>
             <ThemedText>{title}</ThemedText>
-            {
-              caption ? (
-                <ThemedText type='caption'>{caption}</ThemedText>
-              ) : null
-            }
+            {caption ? <ThemedText type="caption">{caption}</ThemedText> : null}
           </View>
-          {
-            onPress ? (
-              <Icon name={'chevron-forward-outline'} />
-            ) : null
-          }
+          {onPress ? <Icon name={"chevron-forward-outline"} /> : null}
         </View>
       </ThemedView>
     </TouchableOpacity>
-  )
+  );
 };
 
 export default function PreferenceScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const budgetType = useAppSelector(state => state.preference.budgetType);
-  const currency = useAppSelector(state => state.preference.currency);
+  const budgetType = useAppSelector((state) => state.preference.budgetType);
+  const currency = useAppSelector((state) => state.preference.currency);
+  const currencies = useAppSelector((state) => state.preference.currencies);
 
-  const handleCategoryPress = () => navigation.navigate('Categories');
+  const handleCategoryPress = () => navigation.navigate("Categories");
   const handleLogout = () => {
-    console.log('Cache has ben reset to default')
+    console.log("Cache has ben reset to default");
     dispatch(resetPreference());
-  }
+  };
+  const handleCurrencyPress = async () => {
+    const newCurrency = await SheetManager.show("plan-budget-sheet", {
+      payload: {
+        data: currencies,
+        selected: currency,
+        title: "Select a Currency",
+      },
+    });
+    if (newCurrency) dispatch(setCurrency(newCurrency));
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(resetOptions());
+      console.log("RESET OPTIONS");
+    }, [])
+  );
 
   return (
     <SafeAreaView>
       <PreferenceRow
-        caption={'List of tags for budget'}
-        title={'Categories'}
-        onPress={handleCategoryPress}
-      />
-      <PreferenceRow
         caption={`${_.startCase(_.lowerCase(budgetType))}`}
-        title={'Budget Type'}
+        title={"Budget Type"}
       />
       <PreferenceRow
         caption={`${currency.name}`}
-        title={'Currency'}
+        title={"Currency"}
+        onPress={handleCurrencyPress}
       />
-      {
-        __DEV__ ? (
-          <View style={[s.center, s.lgGutterTop]}>
-            <ThemedText
-              onPress={handleLogout}
-              style={s.underline}
-            >
-              {'Reset Cache'}
-            </ThemedText>
-          </View>
-        ) : null
-      }
+      <PreferenceRow
+        caption={"List of categories"}
+        title={"Categories"}
+        onPress={handleCategoryPress}
+      />
+      {__DEV__ ? (
+        <View style={[s.center, s.lgGutterTop]}>
+          <ThemedText onPress={handleLogout} style={s.underline}>
+            {"Reset Cache"}
+          </ThemedText>
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -108,6 +114,6 @@ const styles = StyleSheet.create({
     width: 290,
     bottom: 0,
     left: 0,
-    position: 'absolute',
+    position: "absolute",
   },
 });

@@ -1,3 +1,4 @@
+import { CurrencyType } from '@/types';
 import c from 'currency.js';
 import _ from 'lodash';
 import moment from 'moment';
@@ -6,7 +7,7 @@ type CurrencyOption = {
   pattern?: string;
   precision: number;
   symbol: string;
- }
+}
 
 const defaultOptions: CurrencyOption = {
   precision: 2,
@@ -22,9 +23,12 @@ export const currency = (value: number, options: CurrencyOption = defaultOptions
 
 export const formatCurrency = (
   amount: number,
-  prepend?: boolean,
-  symbol = '₱',
+  extras: CurrencyType,
 ) => {
+  const {
+    prepend,
+    symbol = '₱',
+  } = extras || {};
   // the regex below magically adds comma as thousand separators
   const options: CurrencyOption = { precision: 2, symbol };
   if (prepend) options.pattern = '# !';

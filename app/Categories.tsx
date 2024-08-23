@@ -1,29 +1,19 @@
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import _ from "lodash";
 
-import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import { useEffect } from 'react';
-import _ from 'lodash';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import Icon from "@/components/Icon";
 
-import { useDispatch } from 'react-redux';
-import { resetCategories } from '@/features/preference';
+import { useAppSelector } from "@/hooks";
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import Icon from '@/components/Icon';
-
-import { useAppSelector } from '@/hooks';
-
-import s from '@/constants/Style';
-import { CategoryType } from '@/types';
+import s from "@/constants/Style";
+import { CategoryType } from "@/types";
 
 type CategoryRowProps = {
   icon: string;
   name: string;
-}
+};
 
 const PreferenceRow = ({ icon, name }: CategoryRowProps) => {
   return (
@@ -33,19 +23,15 @@ const PreferenceRow = ({ icon, name }: CategoryRowProps) => {
         <ThemedText style={s.smGutterLeft}>{name}</ThemedText>
       </View>
     </ThemedView>
-  )
+  );
 };
 
 export default function CategoriesScreen() {
-  const dispatch = useDispatch();
+  const categories = useAppSelector((state) => state.preference.categories);
 
-  const categories = useAppSelector(state => state.preference.categories);
-
-  const renderItem = ({ item }: { item: CategoryType }) => <PreferenceRow {...item} />;
-
-  useEffect(() => {
-    dispatch(resetCategories());
-  }, []);
+  const renderItem = ({ item }: { item: CategoryType }) => (
+    <PreferenceRow {...item} />
+  );
 
   return (
     <SafeAreaView>
@@ -73,6 +59,6 @@ const styles = StyleSheet.create({
     width: 290,
     bottom: 0,
     left: 0,
-    position: 'absolute',
+    position: "absolute",
   },
 });

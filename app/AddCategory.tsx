@@ -21,7 +21,13 @@ import Icon from "@/components/Icon";
 
 import s from "@/constants/Style";
 import { removeCategory, setCategory } from "@/features/planner";
-import { DEFAULT_AMOUNT_TYPE, DEFAULT_AMOUNT_TYPES, DEFAULT_CATEGORY, DEFAULT_PLAN_GROUP, DEFAULT_PLAN_GROUPS } from "@/constants/Default";
+import {
+  DEFAULT_AMOUNT_TYPE,
+  DEFAULT_AMOUNT_TYPES,
+  DEFAULT_CATEGORY,
+  DEFAULT_PLAN_GROUP,
+  DEFAULT_PLAN_GROUPS,
+} from "@/constants/Default";
 import { getObjectId } from "@/lib/helper";
 import {
   BudgetCategoryType,
@@ -35,7 +41,7 @@ export default function AddCategoryScreen() {
   const dispatch = useDispatch();
 
   const params = useLocalSearchParams();
-  const isEdit = !_.isEmpty(params);
+  const isEdit = !_.isEmpty(params?._id);
 
   const groups = DEFAULT_PLAN_GROUPS;
 
@@ -43,27 +49,31 @@ export default function AddCategoryScreen() {
   // const budgetType = useAppSelector((state) => state.preference.budgetType);
   const plan = useAppSelector((state) => state.planner.monthly);
 
-  const budgetCategory = _.find(plan.categories, c => c._id === params._id);
+  const budgetCategory = _.find(plan.categories, (c) => c._id === params._id);
+  const planGroup = _.find(groups, { value: params?.key });
 
-  const defaultGroup = budgetCategory?.group || DEFAULT_PLAN_GROUP;
+  const defaultGroup = budgetCategory?.group || planGroup || DEFAULT_PLAN_GROUP;
   const defaultCategory = budgetCategory?.category || DEFAULT_CATEGORY;
   const defaultAmountType = budgetCategory?.amountType || DEFAULT_AMOUNT_TYPE;
 
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType>(defaultCategory);
-  const [selectedGroup, setSelectedGroup] = useState<GroupType>(defaultGroup);
-  const [amount, setAmount] = useState(budgetCategory?.amount || 0);
-  const [selectedAmountType, setAmountType] = useState<AmountTypeType>(defaultAmountType);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryType>(defaultCategory);
+  const [amount, setAmount] = useState(budgetCategory?.amount || "");
+  const [selectedAmountType, setAmountType] =
+    useState<AmountTypeType>(defaultAmountType);
   const [remarks, setRemarks] = useState(budgetCategory?.remarks || "");
-  
+
   const handleOnSavePress = () => {
     const newCategory: BudgetCategoryType = {
-      _id: getObjectId(),
+      _id: params._id || getObjectId(),
       amount: parseInt(amount),
       amountType: selectedAmountType,
       category: selectedCategory,
-      group: selectedGroup,
+      group: defaultGroup,
       remarks,
     };
+
+    console.log(JSON.stringify(newCategory), 'THIS_CATEGORY');
 
     dispatch(setCategory(newCategory));
     navigation.goBack();
@@ -72,7 +82,9 @@ export default function AddCategoryScreen() {
   useLayoutEffect(() => {
     const disabled = amount < 1;
     navigation.setOptions({
-      title: `${isEdit ? 'Edit': 'Add'} a category`,
+      title: `${isEdit ? "Edit" : "Add"} ${
+        params?.key ? _.startCase(params?.key) : "a category"
+      }`,
       headerRight: () => (
         <TouchableOpacity
           disabled={disabled}
@@ -85,43 +97,34 @@ export default function AddCategoryScreen() {
     });
   }, [
     amount,
+    params,
     selectedAmountType,
     selectedCategory,
-    selectedGroup,
+    remarks,
   ]);
 
-  const handlePlanGroupPress = async () => {
-    const newGroup = await SheetManager.show('plan-budget-sheet', {
-      payload: {
-        data: groups,
-        selected: selectedGroup,
-        title: 'Select a Group',
-      }
-    });
-    if (newGroup) setSelectedGroup(newGroup);
-  };
   const handleCategoryPress = async () => {
-    const newCategory = await SheetManager.show('plan-budget-sheet', {
+    const newCategory = await SheetManager.show("plan-budget-sheet", {
       payload: {
         data: categories,
         selected: selectedCategory,
-        title: 'Select a Category',
-      }
+        title: "Select a Category",
+      },
     });
     if (newCategory) setSelectedCategory(newCategory);
   };
   const handleAmountType = async () => {
-    const newAmountType = await SheetManager.show('plan-budget-sheet', {
+    const newAmountType = await SheetManager.show("plan-budget-sheet", {
       payload: {
         data: DEFAULT_AMOUNT_TYPES,
         selected: selectedAmountType,
-        title: 'Select an Amount Type',
-      }
+        title: "Select an Amount Type",
+      },
     });
     if (newAmountType) setAmountType(newAmountType);
   };
   const handleRemoveCategory = () => {
-    dispatch(removeCategory(params._id))
+    dispatch(removeCategory(params._id));
 
     navigation.goBack();
   };
@@ -129,24 +132,6 @@ export default function AddCategoryScreen() {
   return (
     <SafeAreaView>
       <ScrollView>
-        <ThemedView style={styles.rowContainer}>
-          <TouchableOpacity
-            disabled={isEdit}
-            onPress={handlePlanGroupPress}
-            style={[s.horizontalStretchCenter, { opacity: isEdit ? 0.5 : 1 }]}
-          >
-            <View style={s.horizontalVCenter}>
-              <Icon name={selectedGroup.icon} />
-              <View style={s.mdGutterLeft}>
-                <ThemedText type="default">{"Group"}</ThemedText>
-                <ThemedText type="caption">
-                  {selectedGroup?.name}
-                </ThemedText>
-              </View>
-            </View>
-            <Icon name={"chevron-forward"} />
-          </TouchableOpacity>
-        </ThemedView>
         <ThemedView style={styles.rowContainer}>
           <TouchableOpacity
             disabled={isEdit}
@@ -172,7 +157,9 @@ export default function AddCategoryScreen() {
               <Icon name={selectedAmountType.icon} />
               <View style={s.mdGutterLeft}>
                 <ThemedText type="default">{"Amount Type"}</ThemedText>
-                <ThemedText type="caption">{selectedAmountType.name}</ThemedText>
+                <ThemedText type="caption">
+                  {selectedAmountType.name}
+                </ThemedText>
               </View>
             </View>
             <Icon name={"chevron-forward"} />
@@ -203,7 +190,7 @@ export default function AddCategoryScreen() {
             />
           </View>
         </ThemedView>
-        
+
         {isEdit ? (
           <View style={[s.center, s.lgGutterTop]}>
             <ThemedText onPress={handleRemoveCategory} style={s.underline}>

@@ -1,59 +1,190 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
+import { useState } from "react";
+import { useNavigation } from "expo-router";
+import _ from "lodash";
+import { TabView, TabBarProps } from "react-native-tab-view";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import CustomTabBar from "@/components/CustomTabBar";
+import Icon from "@/components/Icon";
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+import { formatCurrency, formatDateTime } from "@/lib/format";
+
+import { useAppSelector } from "@/hooks";
+
+import { useDispatch } from "react-redux";
+import { resetPlanner } from "@/features/planner";
+
+import s from "@/constants/Style";
+
+import { BudgetCategoryType } from "@/types";
+
+type TabRoute = {
+  key: string;
+  title: string;
+};
+
+export default function PlannerScreen() {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const layout = useWindowDimensions();
+
+  // const budgetType = useAppSelector((state) => state.preference.budgetType);
+  const plan = useAppSelector((state) => state.planner.monthly);
+  const currency = useAppSelector((state) => state.preference.currency);
+  
+  let groups = _.groupBy(
+    plan?.categories,
+    (n: BudgetCategoryType) => n.group.value
+  );
+  const { needs, wants, savings } = groups;
+  const stats = plan.stats || {};
+
+  const groupAmount = {
+    needs: stats.cash.needs + stats.digital.needs,
+    wants: stats.cash.wants + stats.digital.wants,
+    savings: stats.cash.savings + stats.digital.savings,
+  };
+
+  const [index, setIndex] = useState(0);
+  const routes = [
+    { amount: groupAmount.needs, data: needs, key: "needs", title: "Needs" },
+    { amount: groupAmount.wants, data: wants, key: "wants", title: "Wants" },
+    { amount: groupAmount.savings, data: savings, key: "savings", title: "Savings" },
+  ]
+
+  const budgetAmount =
+    groupAmount.needs + groupAmount.wants + groupAmount.savings;
+
+  const datePlanText = `${formatDateTime(
+    plan.from,
+    "MMMM D"
+  )} - ${formatDateTime(plan.to, "MMMM D")}`;
+
+  const handleResetPlanner = () => {
+    console.log("Planner has ben reset to default");
+    dispatch(resetPlanner());
+  };
+
+  const renderScene = ({ route }) => {
+    const { amount, data, key } = route || {};
+    const onAddPress = () => {
+      navigation.navigate("AddCategory", { key });
+    };
+  
+    return (
+      <ThemedView style={[s.flex1, s.mdGutter]}>
+        <View style={s.horizontalStretchCenter}>
+          <View style={s.mdGutterBottom}>
+            <ThemedText type="subtitle">
+              {formatCurrency(amount, currency)}
+            </ThemedText>
+            <ThemedText type="caption">
+              {`${_.startCase(key)} Amount`}
+            </ThemedText>
+          </View>
+          <TouchableOpacity onPress={onAddPress}>
+            <Icon name={"add"} size={28} />
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          contentContainerStyle={s.flexGrow1}
+          data={data}
+          ListEmptyComponent={EmptyComponent}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
+    )
+  };
+
+  const renderItem = ({ item }: { item: BudgetCategoryType }) => {
+    const onEditPress = () => {
+      navigation.navigate("AddCategory", { _id: item._id });
+    };
+
+    return (
+      <TouchableOpacity onPress={onEditPress}>
+        <ThemedView style={[s.mdGutterHorizontal, s.smGutterVertical]}>
+          <View style={s.horizontalStretchCenter}>
+            <View style={s.horizontalVCenter}>
+              <Icon name={item.amountType.icon} />
+              <View style={s.mdGutterLeft}>
+                <ThemedText type="defaultSemiBold">
+                  {item.category.name}
+                </ThemedText>
+                {item.remarks ? (
+                  <ThemedText type="caption">
+                    {_.startCase(item.remarks)}
+                  </ThemedText>
+                ) : null}
+              </View>
+            </View>
+            <ThemedText type="caption" style={s.bold}>
+              {formatCurrency(item.amount, currency)}
+            </ThemedText>
+          </View>
+        </ThemedView>
+      </TouchableOpacity>
+    );
+  };
+
+  const EmptyComponent = (
+    <View style={[s.flex1, s.center]}>
+      <ThemedText style={s.textAlignCenter} type="caption">
+        {'Start by pressing "+" to add\ncategory for this budget.'}
+      </ThemedText>
+    </View>
+  );
+
+  const renderTabBar = (props: TabBarProps<TabRoute>) => {
+    return (
+      <ThemedView>
+        <CustomTabBar {...props} />
+      </ThemedView>
+    );
+  };
+
+  return (
+    <>
+      <ThemedView style={[s.center, s.mdGutterVertical]}>
+        <ThemedText type="subtitle">
+          {formatCurrency(budgetAmount, currency)}
         </ThemedText>
+        <ThemedText type="caption">{"Budget Amount"}</ThemedText>
+        <ThemedText type="defaultSemiBold">{datePlanText}</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+      />
+
+      {__DEV__ ? (
+        <ThemedView style={[s.center, s.lgGutterVertical]}>
+          <ThemedText onPress={handleResetPlanner} style={s.underline}>
+            {"Reset Planner"}
+          </ThemedText>
+        </ThemedView>
+      ) : null}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   stepContainer: {
@@ -65,6 +196,6 @@ const styles = StyleSheet.create({
     width: 290,
     bottom: 0,
     left: 0,
-    position: 'absolute',
+    position: "absolute",
   },
 });
