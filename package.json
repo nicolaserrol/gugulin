@@ -1,7 +1,7 @@
 {
   "name": "Gugulin",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -9,7 +9,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "release:minor": "npx standard-version --release-as minor",
+    "release:patch": "npx standard-version --release-as patch",
+    "release:major": "npx standard-version --release-as major"
   },
   "jest": {
     "preset": "jest-expo"
