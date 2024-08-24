@@ -44,9 +44,9 @@ export const DEFAULT_CATEGORIES: Array<CategoryType> = [
 	{
 		_id: '66c82edd3f6c12f6318d914f',
 		icon: 'airplane-outline',
-		name: 'Adventure',
+		name: 'Travel',
 		remarks: '',
-		value: 'ADVENTURE',
+		value: 'TRAVEL',
 	},
 	{
 		_id: '66c82ee2ac5c3040a8e98eeb',
