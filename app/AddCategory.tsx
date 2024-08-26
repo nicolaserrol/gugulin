@@ -73,7 +73,7 @@ export default function AddCategoryScreen() {
       remarks,
     };
 
-    console.log(JSON.stringify(newCategory), 'THIS_CATEGORY');
+    console.log(JSON.stringify(newCategory), "THIS_CATEGORY");
 
     dispatch(setCategory(newCategory));
     navigation.goBack();
@@ -89,19 +89,14 @@ export default function AddCategoryScreen() {
         <TouchableOpacity
           disabled={disabled}
           onPress={handleOnSavePress}
-          style={{ opacity: disabled ? 0.5 : 1 }}
+          style={s.center}
         >
-          <Text style={[s.text3, s.textLight, s.bold]}>{"SAVE"}</Text>
+          <Icon name={disabled ? "save-outline" : "save"} size={20} />
+          <Text style={s.caption3}>{"SAVE"}</Text>
         </TouchableOpacity>
       ),
     });
-  }, [
-    amount,
-    params,
-    selectedAmountType,
-    selectedCategory,
-    remarks,
-  ]);
+  }, [amount, params, selectedAmountType, selectedCategory, remarks]);
 
   const handleCategoryPress = async () => {
     const newCategory = await SheetManager.show("plan-budget-sheet", {

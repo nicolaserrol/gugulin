@@ -19,6 +19,12 @@ type PlannerState = {
 const defaultPlan: PlanType = {
   categories: [],
   from: monthlyRange.from,
+  targets: {
+    amount: 0,
+    needs: 0.5,
+    wants: 0.3,
+    savings: 0.2,
+  },
   to: monthlyRange.to,
   margin: 0,
   stats: {
@@ -141,6 +147,16 @@ export const plannerSlice = createSlice({
     setBiMonthlyPlan: (state, action) => {
       state.biMonthly = action.payload;
     },
+    setTargets: (state, action) => {
+      /**
+       * TODO add support for multiple plans per month
+       */
+      const targets = action.payload;
+      state.monthly = {
+        ...state.monthly,
+        targets,
+      }
+    },
   },
 });
 
@@ -150,6 +166,7 @@ export const {
   setBiMonthlyPlan,
   setCategory,
   setMonthlyPlan,
+  setTargets,
 } = plannerSlice.actions;
 
 export default plannerSlice.reducer;

@@ -5,8 +5,8 @@ import {
   FlatList,
   useWindowDimensions,
 } from "react-native";
-import { useLayoutEffect, useState } from "react";
-import { useNavigation } from "expo-router";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "expo-router";
 import _ from "lodash";
 import { TabView, TabBarProps } from "react-native-tab-view";
 
@@ -26,6 +26,8 @@ import s from "@/constants/Style";
 
 import { BudgetCategoryType } from "@/types";
 import HeaderTitle from "@/components/HeaderTitle";
+import { SheetManager } from "react-native-actions-sheet";
+import ProgressBar from "@/components/ProgressBar";
 
 type TabRoute = {
   key: string;
@@ -40,6 +42,9 @@ export default function PlannerScreen() {
   // const budgetType = useAppSelector((state) => state.preference.budgetType);
   const plan = useAppSelector((state) => state.planner.monthly);
   const currency = useAppSelector((state) => state.preference.currency);
+  const targetAmount = useAppSelector(
+    (state) => state.planner.monthly.targets?.amount
+  );
 
   let groups = _.groupBy(
     plan?.categories,
@@ -69,22 +74,27 @@ export default function PlannerScreen() {
   const budgetAmount =
     groupAmount.needs + groupAmount.wants + groupAmount.savings;
 
-  const datePlanText = `${formatDateTime(
-    plan.from,
-    "MMMM D"
-  )} - ${formatDateTime(plan.to, "MMMM D")}`;
+  const datePlanText = `${formatDateTime(plan.from, "MMMM YYYY")}`;
+  let leftToSpend = 0;
+  let progressMessage = "";
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: () => {
-        return <HeaderTitle caption={datePlanText} title={"Planner"} />;
-      },
-    });
-  }, [datePlanText]);
+  if (targetAmount > 0) {
+    leftToSpend = targetAmount - budgetAmount;
+    progressMessage = `${formatCurrency(leftToSpend, currency)} left to spend`;
+    if (leftToSpend < 0)
+      progressMessage = `Exceeds ${formatCurrency(
+        Math.abs(leftToSpend),
+        currency
+      )} from your budget`;
+  }
 
   const handleResetPlanner = () => {
     console.log("Planner has ben reset to default");
     dispatch(resetPlanner());
+  };
+
+  const handleTargetsPress = () => {
+    SheetManager.show("targets-sheet");
   };
 
   const renderScene = ({ route }) => {
@@ -166,16 +176,43 @@ export default function PlannerScreen() {
     );
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => {
+        return <HeaderTitle caption={datePlanText} title={"Planner"} />;
+      },
+      headerRight: () => {
+        return (
+          <TouchableOpacity
+            onPress={handleTargetsPress}
+            style={s.mdGutterRight}
+          >
+            <Icon name={"bullseye-arrow"} type={"material-community"} />
+          </TouchableOpacity>
+        );
+      },
+    });
+  }, [datePlanText]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!targetAmount) handleTargetsPress();
+    }, [targetAmount])
+  );
+
   return (
     <>
       <ThemedView style={[s.center, s.mdGutterVertical]}>
         <ThemedText type="subtitle">
           {formatCurrency(budgetAmount, currency)}
         </ThemedText>
-        <ThemedText type="caption">{"Budget Amount"}</ThemedText>
-        <TouchableOpacity style={styles.configureContainer}>
-          <Icon name={"settings-outline"} />
-        </TouchableOpacity>
+        <ThemedText type="text3">{"Budget Amount"}</ThemedText>
+        {targetAmount > 0 ? (
+          <>
+            <ProgressBar actual={budgetAmount} target={targetAmount} />
+            <ThemedText type="caption1">{progressMessage}</ThemedText>
+          </>
+        ) : null}
       </ThemedView>
 
       <TabView

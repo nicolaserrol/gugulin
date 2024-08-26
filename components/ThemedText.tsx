@@ -3,11 +3,12 @@ import { Text, type TextProps, StyleSheet } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 import s from '@/constants/Style';
+import { Colors } from '@/constants/Colors';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'caption' | 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: string;
 };
 
 export function ThemedText({
@@ -17,18 +18,42 @@ export function ThemedText({
   type = 'default',
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  // const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const color = Colors['light'].text;
+  let typeStyle = {};
+
+  switch (type) {
+    case "default": {
+      typeStyle = styles.default;
+      break;
+    }
+    case "title": {
+      typeStyle = styles.title;
+      break;
+    }
+    case "defaultSemiBold": {
+      typeStyle = styles.defaultSemiBold;
+      break;
+    }
+    case "subtitle": {
+      typeStyle = styles.subtitle;
+      break;
+    }
+    case "link": {
+      typeStyle = styles.link;
+      break;
+    }
+    default: {
+      typeStyle = s[type];
+      break;
+    }
+  }
 
   return (
     <Text
       style={[
         { color },
-        type === 'caption' ? { ...s.caption1 } : undefined,
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
+        typeStyle,
         style,
       ]}
       {...rest}

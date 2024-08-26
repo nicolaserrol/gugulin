@@ -36,20 +36,20 @@ export default function RootLayout() {
   }
 
   return (
-    <SheetProvider>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <StatusBar style="dark" />
-          <ThemeProvider value={DefaultTheme}>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <StatusBar style="dark" />
+        <ThemeProvider value={DefaultTheme}>
+          <SheetProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="Categories" />
               <Stack.Screen name="AddCategory" />
               <Stack.Screen name="+not-found" />
             </Stack>
-          </ThemeProvider>
-        </PersistGate>
-      </Provider>
-    </SheetProvider>
+          </SheetProvider>
+        </ThemeProvider>
+      </PersistGate>
+    </Provider>
   );
 }

@@ -27,9 +27,9 @@ const DEFAULT_COLORS = {
   green: '#4EAD6F',
   lightGreen: '#79C257',
   orange: '#EE5935',
-  primary: '#E93D49',
+  primary: '#0212a8',
   red: '#E93D49',
-  secondary: '#D13136',
+  secondary: '#018c75',
   stickyBg: '#FFF0F1',  
 };
 
