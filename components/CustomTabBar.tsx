@@ -69,7 +69,7 @@ const CustomTabBar = (props) => {
     <View style={s.center}>
       <TabBar
         activeColor={Colors.gray0}
-        labelStyle={[s.caption1, s.bold]}
+        labelStyle={[s.caption2, s.bold]}
         renderIndicator={renderIndicator}
         style={[styles.container, { backgroundColor: Colors.gray0 }]}
         tabStyle={styles.tab}
@@ -82,15 +82,18 @@ const CustomTabBar = (props) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.gray0,
-    borderRadius: 50,
+    borderRadius: 15,
+    height: 30,
     width: 300,
   },
   indicator: {
     backgroundColor: Colors.white,
-    borderRadius: 50,
+    borderRadius: 15,
+    height: 30,
     flex: 1,
   },
   tab: {
+    minHeight: 30,
     padding: 0,
   },
 });

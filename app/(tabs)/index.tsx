@@ -5,7 +5,7 @@ import {
   FlatList,
   useWindowDimensions,
 } from "react-native";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useNavigation } from "expo-router";
 import _ from "lodash";
 import { TabView, TabBarProps } from "react-native-tab-view";
@@ -25,6 +25,7 @@ import { resetPlanner } from "@/features/planner";
 import s from "@/constants/Style";
 
 import { BudgetCategoryType } from "@/types";
+import HeaderTitle from "@/components/HeaderTitle";
 
 type TabRoute = {
   key: string;
@@ -39,7 +40,7 @@ export default function PlannerScreen() {
   // const budgetType = useAppSelector((state) => state.preference.budgetType);
   const plan = useAppSelector((state) => state.planner.monthly);
   const currency = useAppSelector((state) => state.preference.currency);
-  
+
   let groups = _.groupBy(
     plan?.categories,
     (n: BudgetCategoryType) => n.group.value
@@ -57,8 +58,13 @@ export default function PlannerScreen() {
   const routes = [
     { amount: groupAmount.needs, data: needs, key: "needs", title: "Needs" },
     { amount: groupAmount.wants, data: wants, key: "wants", title: "Wants" },
-    { amount: groupAmount.savings, data: savings, key: "savings", title: "Savings" },
-  ]
+    {
+      amount: groupAmount.savings,
+      data: savings,
+      key: "savings",
+      title: "Savings",
+    },
+  ];
 
   const budgetAmount =
     groupAmount.needs + groupAmount.wants + groupAmount.savings;
@@ -67,6 +73,14 @@ export default function PlannerScreen() {
     plan.from,
     "MMMM D"
   )} - ${formatDateTime(plan.to, "MMMM D")}`;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => {
+        return <HeaderTitle caption={datePlanText} title={"Planner"} />;
+      },
+    });
+  }, [datePlanText]);
 
   const handleResetPlanner = () => {
     console.log("Planner has ben reset to default");
@@ -78,7 +92,7 @@ export default function PlannerScreen() {
     const onAddPress = () => {
       navigation.navigate("AddCategory", { key });
     };
-  
+
     return (
       <ThemedView style={[s.flex1, s.mdGutter]}>
         <View style={s.horizontalStretchCenter}>
@@ -102,7 +116,7 @@ export default function PlannerScreen() {
           showsVerticalScrollIndicator={false}
         />
       </ThemedView>
-    )
+    );
   };
 
   const renderItem = ({ item }: { item: BudgetCategoryType }) => {
@@ -159,7 +173,9 @@ export default function PlannerScreen() {
           {formatCurrency(budgetAmount, currency)}
         </ThemedText>
         <ThemedText type="caption">{"Budget Amount"}</ThemedText>
-        <ThemedText type="defaultSemiBold">{datePlanText}</ThemedText>
+        <TouchableOpacity style={styles.configureContainer}>
+          <Icon name={"settings-outline"} />
+        </TouchableOpacity>
       </ThemedView>
 
       <TabView
@@ -182,20 +198,9 @@ export default function PlannerScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  configureContainer: {
     position: "absolute",
+    top: 10,
+    right: 20,
   },
 });
