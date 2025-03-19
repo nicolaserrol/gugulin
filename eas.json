@@ -1,0 +1,26 @@
+{
+  "cli": {
+    "version": ">= 10.2.3",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "debug": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "debug",
+      "ios": {
+        "simulator": true
+      }
+    },
+    "staging": {
+      "distribution": "internal",
+      "channel": "staging"
+    },
+    "production": {
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
