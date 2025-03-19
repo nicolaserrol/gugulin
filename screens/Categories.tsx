@@ -25,7 +25,7 @@ const PreferenceRow = ({ icon, name }: CategoryRowProps) => {
   );
 };
 
-export default function CategoriesScreen() {
+const CategoriesScreen = () => {
   const categories = useAppSelector((state) => state.preference.categories);
 
   const renderItem = ({ item }: { item: Category }) => (
@@ -61,3 +61,5 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
 });
+
+export default CategoriesScreen;

@@ -6,7 +6,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { useFocusEffect, useNavigation } from "expo-router";
 import _ from "lodash";
 import { TabView, TabBarProps } from "react-native-tab-view";
 
@@ -27,6 +26,7 @@ import s from "@/constants/Style";
 import HeaderTitle from "@/components/HeaderTitle";
 import { SheetManager } from "react-native-actions-sheet";
 import ProgressBar from "@/components/ProgressBar";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 type TabRoute = {
   key: string;

@@ -19,15 +19,9 @@ import Fonts from "@/constants/Fonts";
 import { injectStore } from "@/store/injector";
 import { persistor, store } from "@/store";
 
-import CategoriesScreen from "./screens/Categories";
-import AddCategoryScreen from "./screens/AddCategory";
-import PlannerScreen from "./screens/PlannerScreen";
-import PreferenceScreen from "./screens/PreferenceScreen";
+import HomeStack from "./route/HomeStack";
 
 injectStore(store);
-
-// Create a stack navigator
-const Stack = createNativeStackNavigator();
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -51,13 +45,8 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <ThemeProvider value={DefaultTheme}>
           <SheetProvider>
-            <NavigationContainer>
-              <Stack.Navigator>
-                <Stack.Screen name="Planner" component={PlannerScreen} />
-                <Stack.Screen name="Preference" component={PreferenceScreen} />
-                <Stack.Screen name="Categories" component={CategoriesScreen} />
-                <Stack.Screen name="AddCategory" component={AddCategoryScreen} />
-              </Stack.Navigator>
+            <NavigationContainer>      
+              <HomeStack />
             </NavigationContainer>
           </SheetProvider>
         </ThemeProvider>

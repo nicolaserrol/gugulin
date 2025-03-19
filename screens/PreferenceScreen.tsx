@@ -17,7 +17,7 @@ import Icon from "@/components/Icon";
 import { useAppSelector } from "@/hooks";
 
 import s from "@/constants/Style";
-import { useFocusEffect, useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import {
   resetOptions,

@@ -10,7 +10,10 @@ import {
 import { useDispatch } from "react-redux";
 import _ from "lodash";
 import { useLayoutEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import {
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { SheetManager } from "react-native-actions-sheet";
 
 import { useAppSelector } from "@/hooks";
@@ -32,9 +35,10 @@ import { getObjectId } from "@/lib/helper";
 
 export default function AddCategoryScreen() {
   const navigation = useNavigation();
+  const route = useRoute();
   const dispatch = useDispatch();
 
-  const params = useLocalSearchParams();
+  const params = route.params || {};
   const isEdit = !_.isEmpty(params?._id);
 
   const groups = DEFAULT_PLAN_GROUPS;
@@ -93,23 +97,23 @@ export default function AddCategoryScreen() {
   }, [amount, params, selectedAmountType, selectedCategory, remarks]);
 
   const handleCategoryPress = async () => {
-    const newCategory = await SheetManager.show("plan-budget-sheet", {
+    const newCategory = (await SheetManager.show("plan-budget-sheet", {
       payload: {
         data: categories,
         selected: selectedCategory,
         title: "Select a Category",
       },
-    }) as Category;
+    })) as Category;
     if (newCategory) setSelectedCategory(newCategory);
   };
   const handleAmountType = async () => {
-    const newAmountType = await SheetManager.show("plan-budget-sheet", {
+    const newAmountType = (await SheetManager.show("plan-budget-sheet", {
       payload: {
         data: DEFAULT_AMOUNT_TYPES,
         selected: selectedAmountType,
         title: "Select an Amount Type",
       },
-    }) as AmountType;
+    })) as AmountType;
     if (newAmountType) setAmountType(newAmountType);
   };
   const handleRemoveCategory = () => {
